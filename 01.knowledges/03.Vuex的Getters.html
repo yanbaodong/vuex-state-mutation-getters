@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      #app > div {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #000;
+        display: inline-block;
+      }
+      .com1 {
+        background-color: hotpink;
+      }
+      .com2 {
+        background-color: skyblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h2>我是顶级的Vue实例{{ $store.getters.biggerNum }}</h2>
+      <com1></com1>
+      <com2></com2>
+    </div>
+  </body>
+</html>
+<script src="./libs/vue.js"></script>
+<script src="./libs/vuex.js"></script>
+<script>
+  // Vuex
+  /*
+    1.用的时候先实例化
+    2.数据通过state来定义
+    3.设置到顶级Vue实例上
+    4.所有组件都可以通过$store访问到这个共享的仓库
+    5.通过$store.state.属性名可以获取数据
+  */
+  const store = new Vuex.Store({
+    // 仓库 数据定义在这个对象的内部
+    // Vue实例的data属性
+    state: {
+      info: '感觉自己萌萌哒',
+      num: 10
+    },
+    mutations: {
+      addNum(state, num) {
+        state.num += num
+      }
+    },
+    // Vuex的计算属性
+    getters: {
+      // 参数1 数据 state
+      biggerNum(state) {
+        // 返回num 并乘以2
+        return state.num * 2
+      }
+    }
+  })
+
+  // 新建2个组件
+  Vue.component('com1', {
+    template: `<div class='com1'>
+        <input type="button" value="点我" @click="clickMe">
+      
+      </div>`,
+    methods: {
+      clickMe() {
+        this.$store.commit('addNum', 2)
+      }
+    }
+  })
+  Vue.component('com2', {
+    template: `<div class='com2'>
+        <input type="button" value="点我">
+        {{$store.state.info}}
+      </div>`
+  })
+
+  let app = new Vue({
+    el: '#app',
+    // 设置到顶级Vue实例上（挂载 ）
+    store
+  })
+</script>
